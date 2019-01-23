@@ -1,117 +1,85 @@
 <!DOCTYPE html>
 <html>
-
-<head>
-    <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
-    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
-    <title>To-Do List</title>
-</head>
-
-<body>
-    <div id="app"></div>
-    <!-- <style>
+    <head>
+        <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+        <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+        <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+        <title>Todo</title>
+        <style>
             #app {
-                font-family: 'Roboto', sans-serif;
-                margin: 20px;
-                font-size:20px;
+                text-align: center;
+                font-family: sans-serif;
             }
 
-            h1 {
-                font-size: 40px;
+            ul {
+                list-style-position: inside;
             }
-
-            .buttons{
-                margin:10px;
-            }
-
-        </style> -->
-    <script type="text/babel">
-
-            class CardViewer extends React.Component {
-                render () {
-                    return (
-                        <div>
-                            This is the Viewer
-                            <hr/>
-                            <button>Go to Viewer</button>
-                        </div>
-                    );
-                }
-            }
-
-            class CardEditor extends React.Component {
-                render () {
-
-                    const rows = this.props.cards.map((card,i) => {
-                        return (
-                            <tr key={i}>
-                                <td>{card.front}</td>
-                                <td>{card.back}</td>
-                                <td><button>Delete</button></td>
-                            </tr>
-                        );
-                    })
-                    return (
-                        <div>
-                            <h2>This is the Editor</h2>
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <td>Front</td>
-                                        <td>Back</td>
-                                        <td>Delete</td>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {rows}
-                                </tbody>
-                            <hr/>
-                            <button onClick={this.props.switchMode}>Go to Viewer</button>
-                        </div>
-                    );
-                }
-            }
+        </style>
+    </head>
+    <body>
+        <div id="app" />
+        <script type="text/babel">
 
             class App extends React.Component {
 
                 constructor(props) {
                     super(props);
                     this.state = {
-                        editor: true,
-                        cards:[]
+                        tasks: [],
+                        input: ""
                     };
                 }
 
                 render() {
-                    <h1> test </h1>
-                    if(this.state.editor) {
-                        return (
-                           <CardEditor 
-                                cards = {this.state.cards}
-                                switchMode={this.switchMode}
-                            />
-                        );
-                    }
-                    else {
-                        return (
-                            <CardViewer switchMode={this.switchMode}/>
-                        );
-                    }
-
+                    return (
+                        <div>
+                            <h1>Tasks</h1>
+                            <ul>
+                                {this.state.tasks.map((task, i) =>
+                                    <li key={i}>
+                                        <button data-index={i} onClick={this.deleteTask}>&#10003;</button>
+                                        &nbsp;
+                                        {task}
+                                    </li>
+                                )}
+                            </ul>
+                            <div>
+                                Number of Tasks: {this.state.tasks.length}
+                            </div>
+                            <div>
+                                <input onChange={this.handleChange} value={this.state.input} />
+                                <button onClick={this.addTask}>Add Task</button>
+                            </div>
+                        </div>
+                    );
                 }
 
-                switchMode = () => {
+                handleChange = (event) => {
+                    this.setState({
+                        input: event.target.value
+                    });
+                }
+
+                addTask = () => {
                     this.setState(state => ({
-                        editor: false;
-                    }))
+                        tasks: [...state.tasks, state.input],
+                        input: ""
+                    }));
                 }
 
+                deleteTask = (event) => {
+                    const index = event.target.dataset.index;
+                    this.setState(state => {
+                        const tasks = [...this.state.tasks];
+                        tasks.splice(index, 1);
+                        return {
+                            tasks: tasks
+                        };
+                    });
+                }
             }
 
             ReactDOM.render(<App />, document.querySelector("#app"));
-
         </script>
-</body>
-
+    </body>
 </html>
